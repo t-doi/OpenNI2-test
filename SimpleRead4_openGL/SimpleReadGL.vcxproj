@@ -90,7 +90,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>c:\Program Files\OpenNI2\Include;.;$(OPENNI2_INCLUDE64);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\geometry;c:\Program Files\OpenNI2\Include;.;$(OPENNI2_INCLUDE64);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>false</TreatWarningAsError>
@@ -168,6 +168,16 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="geometry\edge.cpp" />
+    <ClCompile Include="geometry\heightmap.cpp" />
+    <ClCompile Include="geometry\matrix2d.cpp" />
+    <ClCompile Include="geometry\OGLGeo.cpp" />
+    <ClCompile Include="geometry\pfacet.cpp" />
+    <ClCompile Include="geometry\plane.cpp" />
+    <ClCompile Include="geometry\rigid.cpp" />
+    <ClCompile Include="geometry\vertex.cpp" />
+    <ClCompile Include="geometry\voxel.cpp" />
+    <ClCompile Include="geometry\vxobj.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mouse_view.cpp" />
     <ClCompile Include="OGL.cpp" />

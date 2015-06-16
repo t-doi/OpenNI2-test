@@ -1,8 +1,0 @@
-150610
-Ubuntu linuxでも動作確認
-freeGLUT3, OpenNI2を使用
-
-150609
-
-Xtionのデータを点群で表示成功．
-
