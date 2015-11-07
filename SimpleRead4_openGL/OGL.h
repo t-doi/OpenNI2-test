@@ -42,6 +42,7 @@ public:
     void set_light(void);
     void coordinate(int size);//x,y,z‚Ì‡‚ÉRGB‚ÌF‚ÅÀ•WŒn‚ğ•\¦
     void set_background(char IsWhite);//
+
 };
 //---------------------------------------------------------------------------
 #endif

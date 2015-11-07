@@ -25,7 +25,8 @@
 
 extern "C"
 {
-#include <windows.h> //VC++用
+//#include <windows.h> //VC++用
+#include "vcsetting.h" //VC++用
 #include <stdio.h>
 #include <math.h>
 #include <GL/gl.h>
@@ -69,6 +70,47 @@ int measure_init(void);//計測準備
 int measure(void);//計測処理
 int measure_close(void);//計測終了処理
 
+void timerfunc1(int val);//周期計測用タイマー関数
+
+void floor_grid()
+{
+	double dx=500;//x間隔
+	double i_count=20;//x方向の本数
+	double dy=500;//y間隔
+	double j_count=20;//y方向の本数
+
+	//線を引く領域
+	double x_min=-1000;
+	double x_max=x_min+dx*i_count;
+	double y_min=-5000;
+	double y_max=y_min+dy*j_count;
+
+	//double x,y,z;
+	double x,y;
+
+	glLineWidth(1);//線の太さ
+
+	for(int i = 0;i<i_count+1;i++){
+		x=x_min+dx*i;
+		glBegin(GL_LINES);					//頂点の指定＋それに対するモード選択（２つの頂点を線で結ぶ）
+		glColor3d(0.0, 0.0, 0.0);
+//		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, black);	//材質のパラメータを設定
+		glVertex3d(x, y_min, 0);
+		glVertex3d(x, y_max, 0);
+		glEnd();
+	}
+
+	for(int j = 0;j<j_count+1;j++){
+		y=y_min+dy*j;
+
+		glBegin(GL_LINES);					//頂点の指定＋それに対するモード選択（２つの頂点を線で結ぶ）
+		glColor3d(0.0, 0.0, 0.0);
+//		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, black);	//材質のパラメータを設定
+		glVertex3d(x_min, y, 0);
+		glVertex3d(x_max, y, 0);
+		glEnd();
+	}
+}
 //---------------------
 void ogl_2d_tri_test(double x0, double y0)//三角形カーソル 2D描画
 {
@@ -136,7 +178,11 @@ ogl1->coordinate(1000);//座標軸描画
 
 //フレーム描画
 ogl1->set_material(0.5,0.5,0.5,1);
-ogl1->Frame(0,3000,-1500,1500,-1000,1000);//座標軸描画
+//ogl1->Frame(0,3000,-1500,1500,-1000,1000);//座標軸描画
+
+//床描画
+ogl1->set_material(0.5,0.5,0.5,1);
+floor_grid();
 
 
 ogl1->Blue();//色青に決定
@@ -150,6 +196,14 @@ for(int i=0;i<XTION_PIXEL_WIDTH;i++)
 		//ogl1->Box(i,i+1,j,j+1,0,h);//箱描画
 	}
 }
+
+
+//センサ描画
+Vertex Org;//原点
+Vertex dst;//方向ベクトル
+Org.x=0;Org.y=0;Org.z=0;
+
+
 
 if(point_draw_flag==1)
 {
@@ -173,7 +227,8 @@ if(map_draw_flag==1)
 //高さ地図描画
 ogl1->set_material(0.0,1.0,0.0,0.5);//緑，半透明
 //ogl1->heightmap(map1);
-ogl1->heightmap2(map1);
+//ogl1->heightmap2(map1);
+ogl1->heightmap2a(map1,500,-500);
 //ogl1->heightmap3(map1);
 }
 
@@ -240,7 +295,10 @@ void keyf(unsigned char key , int x , int y)//一般キー入力
     switch(key)
     {
     case 'm':
-		measure();
+		if(stop_flag==1)stop_flag=0;
+		else stop_flag=1;
+		//measure();
+		timerfunc1(0);
 		break;
     case 'q':
     case 'Q':
@@ -349,6 +407,7 @@ void timerfunc1(int val)
   	glutPostRedisplay();
 	//printf("timerfunc1\n");//debug
 
+	if(stop_flag==0)
 	glutTimerFunc(300,timerfunc1,0);
 }
 	
@@ -365,9 +424,10 @@ int id;
 
 	ogl1=new OGLGeo();
 	map1.allocate(200,200);
-	map1.setarea(0,5000,-2500,2500);
+//	map1.setarea(0,5000,-2500,2500);
+	map1.setarea(0,10000,-5000,5000);
 	map1.clear();
-	stop_flag=0;
+	stop_flag=1;
 	point_draw_flag=1;
 	map_draw_flag=1;
 	
@@ -378,12 +438,11 @@ int id;
 	glutMotionFunc(mmotion);//マウス移動イベント
 	glutReshapeFunc(reshape);//再描画イベント
    //     glutJoystickFunc(js_func,100);//ジョイスティックイベント
-	glutTimerFunc(1000,timerfunc1,0);
+	//glutTimerFunc(1000,timerfunc1,0);
 
 	printf("Press [m] for measurement\n");
 	measure_init();
-	measure();
-
+	
 	glutMainLoop();
 	return 0;
 }
@@ -453,6 +512,8 @@ int measure()
 	float x,y,z;//点群位置読み込み用変数
 	int i2,j2;//map書き込み用
 	double xw,yw,zw;//鉛直上向きzの座標
+	double theta;//センサの傾斜[rad]
+	double xw2,yw2,zw2;//鉛直上向きzの座標．座標変換後
 
 	map1.clear();
 	
@@ -502,18 +563,25 @@ int measure()
 				xw=(double)z;
 				yw=(double)x;
 				zw=(double)y;
-				point[i][j].p[0]=xw;
-				point[i][j].p[1]=yw;
-				point[i][j].p[2]=zw;
+				//座標変換
+				//センサの傾斜
+				theta=(-30)*M_PI/180;//rad
+				xw2=xw*cos(theta)-zw*sin(theta);
+				yw2=yw;
+				zw2=xw*sin(theta)+zw*cos(theta);
+				
+				point[i][j].p[0]=xw2;
+				point[i][j].p[1]=yw2;
+				point[i][j].p[2]=zw2;
 				//printf("[%.0f, %.0f, %.0f]\n",x,y,z);
 				
 				
 				//map構造体へ書き込み
-				i2=map1.xtoi(xw);
-				j2=map1.ytoj(yw);
+				i2=map1.xtoi(xw2);
+				j2=map1.ytoj(yw2);
 				if(map1.check(i2,j2)==1)
 				{
-				map1.write(zw,i2,j2);
+				map1.write(zw2,i2,j2);
 				}
 				
 			}

@@ -3,7 +3,7 @@
 //map‚ğ3ŸŒ³‚ÉŠg’£‚µ‚½‚à‚Ì
 //Ševoxel‚ÍcharŒ^‚ÅC’Êí0‚©1‚µ‚©“ü‚ç‚È‚¢
 #include <math.h>
-#include "Voxel.h"
+#include "voxel.h"
 
 //---------------------------------------------------------------------------
 void Voxel::array_allocate(int mesh_x_in,int mesh_y_in,int mesh_z_in)

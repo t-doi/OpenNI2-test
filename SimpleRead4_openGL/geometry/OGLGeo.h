@@ -20,6 +20,7 @@ public:
         void heightmap(HeightMap &map_in);
         void heightmap2(HeightMap &map_in);
         void heightmap3(HeightMap &map_in);
+        void heightmap2a(HeightMap &map_in, double rangeH, double rangeL);
 
         void points(std::vector<Vertex> &vertices_ptr);
         void pfacets(std::vector<PFacet> &facets_ptr);

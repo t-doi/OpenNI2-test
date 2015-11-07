@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
-#include <windows.h>
-#include <gl/gl.h>
+//#include <windows.h>
+#include "../vcsetting.h"
+#include <GL/gl.h>
 #include "OGLGeo.h"
 #include <algorithm>
 #include <functional>
@@ -267,6 +268,71 @@ double x0,y0,x1,y1;
    facet2.b=p11;
    facet2.c=p01;
    facet2.abgd();
+   pfacet(facet2);
+   }
+
+ }
+ }
+}
+//---------------------------------------------------------------------------
+void OGLGeo::heightmap2a(HeightMap &map_in, double rangeH, double rangeL)
+{
+//‚‚³’n}‚Ì•`‰æ‚»‚Ì‚QADƒ|ƒŠƒSƒ“‚ğg‚¤
+//‚‚³‚É‚æ‚Á‚ÄF‚ğ•Ï‚¦‚é
+	PFacet facet1,facet2;
+Vertex p00,p01,p10,p11;
+double x0,y0,x1,y1;
+double h_ratio;
+
+
+for(int j=0;j<map_in.mesh_j-1;j++)
+ {
+ for(int i=0;i<map_in.mesh_i-1;i++)
+ {
+  x0=map_in.itox(i);
+  x1=map_in.itox(i+1);
+  y0=map_in.jtoy(j);
+  y1=map_in.jtoy(j+1);
+  p00.x=x0;
+  p00.y=y0;
+  p01.x=x0;
+  p01.y=y1;
+  p10.x=x1;
+  p10.y=y0;
+  p11.x=x1;
+  p11.y=y1;
+   if(
+    (map_in.read(&p00.z,i,j))&&
+    (map_in.read(&p10.z,i+1,j))&&
+    (map_in.read(&p01.z,i,j+1))
+    )
+   {
+   facet1.a=p00;
+   facet1.b=p10;
+   facet1.c=p01;
+   facet1.abgd();
+   h_ratio=(facet1.a.z-rangeL)/(rangeH-rangeL);
+   if(h_ratio>1)h_ratio=1;
+   if(h_ratio<0)h_ratio=0;
+//   set_material(0,h_ratio,0,1);
+   set_material(1-h_ratio,h_ratio,1-h_ratio,1);
+   pfacet(facet1);
+   }
+
+   if(
+    (map_in.read(&p10.z,i+1,j))&&
+    (map_in.read(&p11.z,i+1,j+1))&&
+    (map_in.read(&p01.z,i,j+1))
+    )
+   {
+   facet2.a=p10;
+   facet2.b=p11;
+   facet2.c=p01;
+   facet2.abgd();
+   h_ratio=(facet1.a.z-rangeL)/(rangeH-rangeL);
+   if(h_ratio>1)h_ratio=1;
+   if(h_ratio<0)h_ratio=0;
+   set_material(1-h_ratio,h_ratio,1-h_ratio,1);
    pfacet(facet2);
    }
 
