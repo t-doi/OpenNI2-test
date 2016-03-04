@@ -47,6 +47,8 @@ HeightMap map1;
 int W_Height=500;//ウインドウ高さ.描画で使う。
 int W_Width=500;//ウインドウ幅.描画で使う。
 
+double sensor_position[]={0,0,1000};//センサの位置
+double sensor_pitch_angle=-30*M_PI/180;//センサのピッチ角
 
 
 #define SAMPLE_READ_WAIT_TIMEOUT 2000 //2000ms
@@ -201,8 +203,19 @@ for(int i=0;i<XTION_PIXEL_WIDTH;i++)
 //センサ描画
 Vertex Org;//原点
 Vertex dst;//方向ベクトル
-Org.x=0;Org.y=0;Org.z=0;
-
+Org.x=sensor_position[0];Org.y=sensor_position[1];Org.z=sensor_position[2];
+dst.x=Org.x+4000*cos(sensor_pitch_angle);
+dst.y=Org.y;
+dst.z=Org.z+4000*sin(sensor_pitch_angle);
+ogl1->set_material(1.0,1.0,1.0,0.5);//黒色，半透明
+glPointSize(10);
+glBegin(GL_POINTS);
+glVertex3d(Org.x, Org.y,Org.z);
+glEnd();
+glBegin(GL_LINES);
+	glVertex3d(Org.x,Org.y,Org.z);
+	glVertex3d(dst.x,dst.y,dst.z);
+glEnd();
 
 
 if(point_draw_flag==1)
@@ -565,10 +578,16 @@ int measure()
 				zw=(double)y;
 				//座標変換
 				//センサの傾斜
-				theta=(-30)*M_PI/180;//rad
+				//theta=(-30)*M_PI/180;//rad
+				theta=sensor_pitch_angle;
 				xw2=xw*cos(theta)-zw*sin(theta);
 				yw2=yw;
 				zw2=xw*sin(theta)+zw*cos(theta);
+
+				//位置調整
+				xw2=xw2+sensor_position[0];
+				yw2=yw2+sensor_position[1];
+				zw2=zw2+sensor_position[2];
 				
 				point[i][j].p[0]=xw2;
 				point[i][j].p[1]=yw2;
