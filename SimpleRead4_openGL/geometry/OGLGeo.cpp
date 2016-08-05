@@ -5,6 +5,7 @@
 #include "OGLGeo.h"
 #include <algorithm>
 #include <functional>
+#include "../gl_tools.h"
 
 //---------------------------------------------------------------------------
 void OGLGeo::vertex(Vertex &v_in)
@@ -67,7 +68,7 @@ for(i=0;i<v_in.mesh_x;i++)
     double y1=v_in.y0+(j+1)*v_in.dy;
     double z0=v_in.z0+k*v_in.dz;
     double z1=v_in.z0+(k+1)*v_in.dz;
-    Box(x0,x1,y0,y1,z0,z1);
+    GL_Box(x0,x1,y0,y1,z0,z1);
     }
 }
 }
@@ -315,7 +316,7 @@ for(int j=0;j<map_in.mesh_j-1;j++)
    if(h_ratio>1)h_ratio=1;
    if(h_ratio<0)h_ratio=0;
 //   set_material(0,h_ratio,0,1);
-   set_material(1-h_ratio,h_ratio,1-h_ratio,1);
+   GL_set_material(1-h_ratio,h_ratio,1-h_ratio,1);
    pfacet(facet1);
    }
 
@@ -332,7 +333,7 @@ for(int j=0;j<map_in.mesh_j-1;j++)
    h_ratio=(facet1.a.z-rangeL)/(rangeH-rangeL);
    if(h_ratio>1)h_ratio=1;
    if(h_ratio<0)h_ratio=0;
-   set_material(1-h_ratio,h_ratio,1-h_ratio,1);
+   GL_set_material(1-h_ratio,h_ratio,1-h_ratio,1);
    pfacet(facet2);
    }
 

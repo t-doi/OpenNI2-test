@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------
 #ifndef OGLgeoH
 #define OGLgeoH
-#include "../OGL.h"
 #include "vertex.h"
 #include "edge.h"
 #include "pfacet.h"
@@ -9,7 +8,7 @@
 #include "heightmap.h"
 #include "vector"
 //---------------------------------------------------------------------------
-class OGLGeo : public OGL
+class OGLGeo
 {
 public:
         void vertex(Vertex &v_in);

@@ -178,12 +178,14 @@
     <ClCompile Include="geometry\vertex.cpp" />
     <ClCompile Include="geometry\voxel.cpp" />
     <ClCompile Include="geometry\vxobj.cpp" />
+    <ClCompile Include="gl_tools.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mouse_view.cpp" />
     <ClCompile Include="OGL.cpp" />
     <ClCompile Include="OGL2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gl_tools.h" />
     <ClInclude Include="mouse_view.h" />
     <ClInclude Include="OGL.h" />
     <ClInclude Include="OGL2D.h" />

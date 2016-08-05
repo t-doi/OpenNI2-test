@@ -34,7 +34,7 @@ extern "C"
 //#include <GL/freeglut.h>
 }
 #include "mouse_view.h"
-#include "OGL.h"
+#include "gl_tools.h"
 #include "OGL2D.h"
 #include <OGLGeo.h>
 #include <vertex.h>
@@ -74,45 +74,7 @@ int measure_close(void);//計測終了処理
 
 void timerfunc1(int val);//周期計測用タイマー関数
 
-void floor_grid()
-{
-	double dx=500;//x間隔
-	double i_count=20;//x方向の本数
-	double dy=500;//y間隔
-	double j_count=20;//y方向の本数
 
-	//線を引く領域
-	double x_min=-1000;
-	double x_max=x_min+dx*i_count;
-	double y_min=-5000;
-	double y_max=y_min+dy*j_count;
-
-	//double x,y,z;
-	double x,y;
-
-	glLineWidth(1);//線の太さ
-
-	for(int i = 0;i<i_count+1;i++){
-		x=x_min+dx*i;
-		glBegin(GL_LINES);					//頂点の指定＋それに対するモード選択（２つの頂点を線で結ぶ）
-		glColor3d(0.0, 0.0, 0.0);
-//		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, black);	//材質のパラメータを設定
-		glVertex3d(x, y_min, 0);
-		glVertex3d(x, y_max, 0);
-		glEnd();
-	}
-
-	for(int j = 0;j<j_count+1;j++){
-		y=y_min+dy*j;
-
-		glBegin(GL_LINES);					//頂点の指定＋それに対するモード選択（２つの頂点を線で結ぶ）
-		glColor3d(0.0, 0.0, 0.0);
-//		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, black);	//材質のパラメータを設定
-		glVertex3d(x_min, y, 0);
-		glVertex3d(x_max, y, 0);
-		glEnd();
-	}
-}
 //---------------------
 void ogl_2d_tri_test(double x0, double y0)//三角形カーソル 2D描画
 {
@@ -139,7 +101,7 @@ void disp_overlay( void ) //2D-overlay描画．マウスズームとは無関係にサイズ固定．
     void *font1=GLUT_BITMAP_9_BY_15;
     glRasterPos2d(-0.9,0.9);//画面座標でメッセージ表示位置指定
     //glutBitmapString(font1, reinterpret_cast<const unsigned char*>("Doi Robotics Lab."));
-    //glutBitmapString(font1, (unsigned char *)("Doi Robotics Lab.2015.6.9"));
+    //glutBitmapString(font1, (unsigned char *)("Doi Robotics Lab.2016.8.5"));
     glutBitmapString(font1, (unsigned char *)("[m] :measurement."));
     glRasterPos2d(-0.9,0.85);//画面座標でメッセージ表示位置指定
     glutBitmapString(font1, (unsigned char *)("[q] :quit."));
@@ -147,6 +109,8 @@ void disp_overlay( void ) //2D-overlay描画．マウスズームとは無関係にサイズ固定．
     glutBitmapString(font1, (unsigned char *)("[a] : toggle points."));
     glRasterPos2d(-0.9,0.75);//画面座標でメッセージ表示位置指定
     glutBitmapString(font1, (unsigned char *)("[s] : toggle map."));
+    glRasterPos2d(-0.9,0.7);//画面座標でメッセージ表示位置指定
+    glutBitmapString(font1, (unsigned char *)("[d] : data dump."));
 
   glPopMatrix();
 
@@ -167,27 +131,27 @@ void disp( void ) //描画
 //視点の決定
 double wh_ratio;//　w/hの比
 wh_ratio=(double)W_Width/(double)W_Height;
-ogl1->set_viewpoint(mv1.distance,mv1.azimuth,mv1.elevation,
+GL_set_viewpoint(mv1.distance,mv1.azimuth,mv1.elevation,
   mv1.v_center[0], mv1.v_center[1], mv1.v_center[2], wh_ratio);
 
     disp_overlay();//二次元描画．三次元描画に重ねる形
-    ogl1->set_light();//照明セット
+    GL_set_light();//照明セット
 
 //何か物体を描画したいときにはここにモデルを追加する------
 
 glLineWidth(3);//線の太さ決定
-ogl1->coordinate(1000);//座標軸描画
+GL_Coordinate(1000);//座標軸描画
 
 //フレーム描画
-ogl1->set_material(0.5,0.5,0.5,1);
+GL_set_material(0.5,0.5,0.5,1);
 //ogl1->Frame(0,3000,-1500,1500,-1000,1000);//座標軸描画
 
 //床描画
-ogl1->set_material(0.5,0.5,0.5,1);
-floor_grid();
+GL_set_material(0.5,0.5,0.5,1);
+GL_FloorGrid(-1000,3000,-2000,2000,20,20);
 
 
-ogl1->Blue();//色青に決定
+GL_Blue();//色青に決定
 //ogl1->Box(0,1,-1,1,-0.5,0.5);//箱描画
 
 for(int i=0;i<XTION_PIXEL_WIDTH;i++)
@@ -207,7 +171,7 @@ Org.x=sensor_position[0];Org.y=sensor_position[1];Org.z=sensor_position[2];
 dst.x=Org.x+4000*cos(sensor_pitch_angle);
 dst.y=Org.y;
 dst.z=Org.z+4000*sin(sensor_pitch_angle);
-ogl1->set_material(1.0,1.0,1.0,0.5);//黒色，半透明
+GL_set_material(1.0,1.0,1.0,0.5);//黒色，半透明
 glPointSize(10);
 glBegin(GL_POINTS);
 glVertex3d(Org.x, Org.y,Org.z);
@@ -222,7 +186,7 @@ if(point_draw_flag==1)
 {
 //点群描画
 //ogl1->Red();//色赤に決定
-ogl1->set_material(1.0,0.0,0.0,0.5);//赤色，半透明
+GL_set_material(1.0,0.0,0.0,0.5);//赤色，半透明
 for(int i=0;i<XTION_PIXEL_WIDTH;i++)
 {
 	for(int j=0;j<XTION_PIXEL_HEIGHT;j++)
@@ -238,7 +202,7 @@ for(int i=0;i<XTION_PIXEL_WIDTH;i++)
 if(map_draw_flag==1)
 {
 //高さ地図描画
-ogl1->set_material(0.0,1.0,0.0,0.5);//緑，半透明
+GL_set_material(0.0,1.0,0.0,0.5);//緑，半透明
 //ogl1->heightmap(map1);
 //ogl1->heightmap2(map1);
 ogl1->heightmap2a(map1,500,-500);
@@ -250,6 +214,48 @@ ogl1->heightmap2a(map1,500,-500);
 
   glFlush();
   glutSwapBuffers();
+}
+//-----------------------
+
+
+void dump_data(char mode_c)
+{
+	//xyzデータを出力
+	//mode_c ==1でファイル出力
+	//mode_c==2で画面出力
+
+	FILE *fp;
+	double xw,yw,zw;
+
+	if(mode_c==1)
+	{
+		fp=fopen("data.csv","a");
+	}
+
+	for(int i=0;i<XTION_PIXEL_WIDTH;i++)
+	{
+			for(int j=0;j<XTION_PIXEL_HEIGHT;j++)
+			{
+				xw=point[i][j].p[0];
+				yw=point[i][j].p[1];
+				zw=point[i][j].p[2];
+
+				printf("%f,%f,%f \n",xw,yw,zw);
+				if(mode_c==1)
+				{
+					fprintf(fp,"%f,%f,%f \n",xw,yw,zw);
+				}
+				
+
+			}
+	}
+
+	if(mode_c==1)
+	{
+		fclose(fp);
+	}
+
+			
 }
 //-----------------------
 void mbutton(int button , int state , int x , int y) //マウスボタン押し下げ、上げイベント
@@ -331,6 +337,11 @@ void keyf(unsigned char key , int x , int y)//一般キー入力
 		if(map_draw_flag==1)map_draw_flag=0;
 		else map_draw_flag=1;
 		break;
+	case 'd':
+		{
+			//データ出力
+			dump_data(2);//引数１でファイル出力．それ以外はコマンドウインドウ出力のみ
+		}
     default:
         break;
     }
