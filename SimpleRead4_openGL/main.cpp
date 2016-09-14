@@ -39,11 +39,14 @@ extern "C"
 #include <OGLGeo.h>
 #include <vertex.h>
 #include <heightmap.h>
+#include <vxobj.h>
 
 
 OGLGeo *ogl1;//OpenGL応用ライブラリ
 MouseView mv1;//マウスモーション管理クラス
 HeightMap map1;
+VXObj voxel1;//ボクセル
+
 int W_Height=500;//ウインドウ高さ.描画で使う。
 int W_Width=500;//ウインドウ幅.描画で使う。
 
@@ -67,6 +70,7 @@ Point3D point[XTION_PIXEL_WIDTH][XTION_PIXEL_HEIGHT];
 char stop_flag;//計測停止フラグ
 char point_draw_flag;//点群描画フラグ
 char map_draw_flag;//高さ地図描画フラグ
+char voxel_draw_flag;//ボクセル描画フラグ
 
 int measure_init(void);//計測準備
 int measure(void);//計測処理
@@ -110,6 +114,8 @@ void disp_overlay( void ) //2D-overlay描画．マウスズームとは無関係にサイズ固定．
     glRasterPos2d(-0.9,0.75);//画面座標でメッセージ表示位置指定
     glutBitmapString(font1, (unsigned char *)("[s] : toggle map."));
     glRasterPos2d(-0.9,0.7);//画面座標でメッセージ表示位置指定
+    glutBitmapString(font1, (unsigned char *)("[z] : toggle voxel."));
+    glRasterPos2d(-0.9,0.65);//画面座標でメッセージ表示位置指定
     glutBitmapString(font1, (unsigned char *)("[d] : data dump."));
 
   glPopMatrix();
@@ -182,33 +188,41 @@ glBegin(GL_LINES);
 glEnd();
 
 
-if(point_draw_flag==1)
-{
-//点群描画
-//ogl1->Red();//色赤に決定
-GL_set_material(1.0,0.0,0.0,0.5);//赤色，半透明
-for(int i=0;i<XTION_PIXEL_WIDTH;i++)
-{
-	for(int j=0;j<XTION_PIXEL_HEIGHT;j++)
+	if(point_draw_flag==1)
 	{
-		double h=depth_data[i][j]*0.01;
-		glPointSize(1);
-		glBegin(GL_POINTS);
-		glVertex3d(point[i][j].p[0],point[i][j].p[1],point[i][j].p[2]);
-		glEnd();
+	//点群描画
+	//ogl1->Red();//色赤に決定
+	GL_set_material(1.0,0.0,0.0,0.5);//赤色，半透明
+		for(int i=0;i<XTION_PIXEL_WIDTH;i++)
+		{
+			for(int j=0;j<XTION_PIXEL_HEIGHT;j++)
+			{
+			double h=depth_data[i][j]*0.01;
+			glPointSize(1);
+			glBegin(GL_POINTS);
+			glVertex3d(point[i][j].p[0],point[i][j].p[1],point[i][j].p[2]);
+			glEnd();
+			}
+		}
 	}
-}
-}
-if(map_draw_flag==1)
-{
-//高さ地図描画
-GL_set_material(0.0,1.0,0.0,0.5);//緑，半透明
-//ogl1->heightmap(map1);
-//ogl1->heightmap2(map1);
-ogl1->heightmap2a(map1,500,-500);
-//ogl1->heightmap3(map1);
-}
 
+	if(map_draw_flag==1)
+	{
+	//高さ地図描画
+	GL_set_material(0.0,1.0,0.0,0.5);//緑，半透明
+	//ogl1->heightmap(map1);
+	//ogl1->heightmap2(map1);
+	ogl1->heightmap2a(map1,500,-500);
+	//ogl1->heightmap3(map1);
+	}
+
+	if(voxel_draw_flag==1)
+	{
+	//ボクセル描画
+	GL_set_material(0.0,0.0,1.0,0.5);//青，半透明
+	ogl1->voxel(voxel1);
+	//ogl1->voxel2(voxel1);
+	}
 //三次元描画ここまで---------------------------
 
 
@@ -337,6 +351,10 @@ void keyf(unsigned char key , int x , int y)//一般キー入力
 		if(map_draw_flag==1)map_draw_flag=0;
 		else map_draw_flag=1;
 		break;
+    case 'z':
+		if(voxel_draw_flag==1)voxel_draw_flag=0;
+		else voxel_draw_flag=1;
+		break;
 	case 'd':
 		{
 			//データ出力
@@ -444,17 +462,30 @@ int id;
 	glutInitWindowSize((int)W_Width , (int)W_Height);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-	id=glutCreateWindow("OpenNI2 test - Doi Robotics Lab. 150616");
+	id=glutCreateWindow("OpenNI2 test - Doi Robotics Lab. 160914");
 
 	ogl1=new OGLGeo();
+
+	//地図構造体の初期化
 	map1.allocate(200,200);
 //	map1.setarea(0,5000,-2500,2500);
 	map1.setarea(0,10000,-5000,5000);
 	map1.clear();
 	stop_flag=1;
+
+	//ボクセルの初期化
+	voxel1.array_allocate(50,50,25);
+	voxel1.set_area(0,2000,-1000,1000,0,1000);
+	voxel1.clear();
+	
+	//計測初期化
+	measure_init();
+	
+	//描画フラグ設定
 	point_draw_flag=1;
 	map_draw_flag=1;
-	
+	voxel_draw_flag=1;
+
 	glutDisplayFunc(disp);//描画処理
 	glutKeyboardFunc(keyf);//キー入力イベント
 	glutSpecialFunc(keyf2);//特殊キー入力イベント
@@ -465,7 +496,6 @@ int id;
 	//glutTimerFunc(1000,timerfunc1,0);
 
 	printf("Press [m] for measurement\n");
-	measure_init();
 	
 	glutMainLoop();
 	return 0;
@@ -539,7 +569,7 @@ int measure()
 	double theta;//センサの傾斜[rad]
 	double xw2,yw2,zw2;//鉛直上向きzの座標．座標変換後
 
-	map1.clear();
+	map1.clear();//高さ地図クリア
 	
 	while(1)
 	{
@@ -588,7 +618,7 @@ int measure()
 				yw=(double)x;
 				zw=(double)y;
 				//座標変換
-				//センサの傾斜
+				//センサの傾斜を入れてワールド座標にする
 				//theta=(-30)*M_PI/180;//rad
 				theta=sensor_pitch_angle;
 				xw2=xw*cos(theta)-zw*sin(theta);
@@ -613,6 +643,9 @@ int measure()
 				{
 				map1.write(zw2,i2,j2);
 				}
+
+				//Voxelに書き込み
+				voxel1.input(xw2,yw2,zw2);
 				
 			}
 			//printf("\n");

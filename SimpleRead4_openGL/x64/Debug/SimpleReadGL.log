@@ -1,20 +1,20 @@
-﻿2016/08/05 17:20:39 にビルドを開始しました。
+﻿2016/09/14 13:19:16 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\d\Documents\GitHub\OpenNI2-test\SimpleRead4_openGL\SimpleReadGL.vcxproj" (Build ターゲット)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /I.\geometry /I"c:\Program Files\OpenNI2\Include" /I. /I"C:\Program Files\OpenNI2\Include\\" /Zi /nologo /W4 /WX- /MP /Od /D _WINDLL /D _MBCS /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc110.pdb" /Gd /TP /errorReport:prompt main.cpp
          main.cpp
      1>c:\users\d\documents\github\openni2-test\simpleread4_opengl\gl_tools.h(7): warning C4005: 'WIN32' : マクロが再定義されました。
                  C:\Program Files (x86)\Windows Kits\8.0\Include\shared\minwindef.h(38) : 'WIN32' の前の定義を確認してください
-     1>main.cpp(161): warning C4189: 'h' : ローカル変数が初期化されましたが、参照されていません
-     1>main.cpp(194): warning C4189: 'h' : ローカル変数が初期化されましたが、参照されていません
-     1>main.cpp(232): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>main.cpp(167): warning C4189: 'h' : ローカル変数が初期化されましたが、参照されていません
+     1>main.cpp(200): warning C4189: 'h' : ローカル変数が初期化されましたが、参照されていません
+     1>main.cpp(246): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
-     1>main.cpp(396): warning C4100: 'buttonMask' : 引数は関数の本体部で 1 度も参照されません。
-     1>main.cpp(428): warning C4100: 'val' : 引数は関数の本体部で 1 度も参照されません。
-     1>main.cpp(544): warning C4127: 条件式が定数です。
+     1>main.cpp(414): warning C4100: 'buttonMask' : 引数は関数の本体部で 1 度も参照されません。
+     1>main.cpp(446): warning C4100: 'val' : 引数は関数の本体部で 1 度も参照されません。
+     1>main.cpp(574): warning C4127: 条件式が定数です。
      1>c:\users\d\documents\github\openni2-test\simpleread4_opengl\gl\freeglut_std.h(614): warning C4505: 'glutCreateMenu_ATEXIT_HACK' : 参照されていないローカル関数は削除されました。
-     1>c:\users\d\documents\github\openni2-test\simpleread4_opengl\main.cpp(246): warning C4701: 初期化されていない可能性のあるローカル変数 'fp' が使用されます
-     1>c:\users\d\documents\github\openni2-test\simpleread4_opengl\main.cpp(246): warning C4703: 初期化されていない可能性のあるローカル ポインター変数 'fp' が使用されています
+     1>c:\users\d\documents\github\openni2-test\simpleread4_opengl\main.cpp(260): warning C4701: 初期化されていない可能性のあるローカル変数 'fp' が使用されます
+     1>c:\users\d\documents\github\openni2-test\simpleread4_opengl\main.cpp(260): warning C4703: 初期化されていない可能性のあるローカル ポインター変数 'fp' が使用されています
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\d\Documents\GitHub\OpenNI2-test\SimpleRead4_openGL\x64\Debug\SimpleReadGL.exe" /INCREMENTAL /NOLOGO /LIBPATH:"c:\Program Files\OpenNI2\Lib" /LIBPATH:"C:\Users\d\Documents\GitHub\OpenNI2-test\SimpleRead4_openGL\x64\Debug\\" /LIBPATH:"C:\Program Files\OpenNI2\Lib\\" /WX OpenNI2.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\d\Documents\GitHub\OpenNI2-test\SimpleRead4_openGL\x64\Debug\SimpleReadGL.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\d\Documents\GitHub\OpenNI2-test\SimpleRead4_openGL\x64\Debug\SimpleReadGL.lib" /MACHINE:X64 x64\Debug\edge.obj
          x64\Debug\heightmap.obj
@@ -42,4 +42,4 @@
 
 ビルドに成功しました。
 
-経過時間 00:00:00.80
+経過時間 00:00:00.95
