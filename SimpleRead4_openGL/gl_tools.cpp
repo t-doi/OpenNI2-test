@@ -20,7 +20,7 @@ extern "C"
 #include "gl_tools.h"
 #include "GL/freeglut.h"//テキスト表示に必要
 
-#define M_PI 3.141592 //gccなら不要
+//#define M_PI 3.141592 //gccなら不要
 
 //---------------------------------------------------------------------------
 void GL_Box(double x0,double x1,double y0,double y1,double z0,double z1)

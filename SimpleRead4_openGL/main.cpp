@@ -457,12 +457,13 @@ void timerfunc1(int val)
 int main(int argc , char ** argv) {
 int id;
 
-  glutInit(&argc , argv);
+
+	glutInit(&argc , argv);
 	glutInitWindowPosition(100 , 50);
 	glutInitWindowSize((int)W_Width , (int)W_Height);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-	id=glutCreateWindow("OpenNI2 test - Doi Robotics Lab. 160914");
+	id=glutCreateWindow("OpenNI2 test - Doi Robotics Lab. 170630");
 
 	ogl1=new OGLGeo();
 
