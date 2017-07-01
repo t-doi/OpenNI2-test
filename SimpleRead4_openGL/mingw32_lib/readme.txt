@@ -1,0 +1,3 @@
+MSVC用のDLLからライブラリファイルを作成するのに以下が必要
+pexports.exe
+dlltools.exe

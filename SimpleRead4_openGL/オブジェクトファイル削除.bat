@@ -1,5 +1,10 @@
-rem rmdir  /s obj
-rem rmdir  /s ipch
+copy .\bin\Debug\*.exe .\
+rmdir  /s obj
+rmdir  /s bin
+exit
+
+rem ˆÈ‰ºMSVC—p
+rmdir  /s ipch
 rmdir  /s Debug
 del x64\Debug\*.tlog
 del x64\Debug\*.obj

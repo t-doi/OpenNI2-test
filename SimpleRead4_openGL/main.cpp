@@ -1,37 +1,20 @@
-/*****************************************************************************
-*                                                                            *
-*  OpenNI 2.x Alpha                                                          *
-*  Copyright (C) 2012 PrimeSense Ltd.                                        *
-*                                                                            *
-*  This file is part of OpenNI.                                              *
-*                                                                            *
-*  Licensed under the Apache License, Version 2.0 (the "License");           *
-*  you may not use this file except in compliance with the License.          *
-*  You may obtain a copy of the License at                                   *
-*                                                                            *
-*      http://www.apache.org/licenses/LICENSE-2.0                            *
-*                                                                            *
-*  Unless required by applicable law or agreed to in writing, software       *
-*  distributed under the License is distributed on an "AS IS" BASIS,         *
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  *
-*  See the License for the specific language governing permissions and       *
-*  limitations under the License.                                            *
-*                                                                            *
-*****************************************************************************/
+//OpenNI test progtam
+//Xtion PRO
+//170701 Doi Robotics Lab.
+
 #include <stdio.h>
 #include <OpenNI.h>
 
-#include "OniSampleUtilities.h"
+//#include "OniSampleUtilities.h"
 
 extern "C"
 {
 //#include <windows.h> //VC++用
-#include "vcsetting.h" //VC++用
+//#include "vcsetting.h" //VC++用
 #include <stdio.h>
 #include <math.h>
 #include <GL/gl.h>
 #include "GL/freeglut.h"
-//#include <GL/freeglut.h>
 }
 #include "mouse_view.h"
 #include "gl_tools.h"
@@ -259,7 +242,7 @@ void dump_data(char mode_c)
 				{
 					fprintf(fp,"%f,%f,%f \n",xw,yw,zw);
 				}
-				
+
 
 			}
 	}
@@ -269,7 +252,7 @@ void dump_data(char mode_c)
 		fclose(fp);
 	}
 
-			
+
 }
 //-----------------------
 void mbutton(int button , int state , int x , int y) //マウスボタン押し下げ、上げイベント
@@ -452,7 +435,7 @@ void timerfunc1(int val)
 	if(stop_flag==0)
 	glutTimerFunc(300,timerfunc1,0);
 }
-	
+
 //-----------------------
 int main(int argc , char ** argv) {
 int id;
@@ -463,7 +446,7 @@ int id;
 	glutInitWindowSize((int)W_Width , (int)W_Height);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-	id=glutCreateWindow("OpenNI2 test - Doi Robotics Lab. 170630");
+	id=glutCreateWindow("OpenNI2 test - Doi Robotics Lab. 170701");
 
 	ogl1=new OGLGeo();
 
@@ -478,10 +461,10 @@ int id;
 	voxel1.array_allocate(50,50,25);
 	voxel1.set_area(0,2000,-1000,1000,0,1000);
 	voxel1.clear();
-	
+
 	//計測初期化
 	measure_init();
-	
+
 	//描画フラグ設定
 	point_draw_flag=1;
 	map_draw_flag=1;
@@ -497,7 +480,7 @@ int id;
 	//glutTimerFunc(1000,timerfunc1,0);
 
 	printf("Press [m] for measurement\n");
-	
+
 	glutMainLoop();
 	return 0;
 }
@@ -571,7 +554,7 @@ int measure()
 	double xw2,yw2,zw2;//鉛直上向きzの座標．座標変換後
 
 	map1.clear();//高さ地図クリア
-	
+
 	while(1)
 	{
 	GLtimebase = glutGet(GLUT_ELAPSED_TIME);//経過時間を取得
@@ -611,7 +594,7 @@ int measure()
 				int index=j*XTION_PIXEL_WIDTH+i;
 				depth_data[i][j]=pDepth[index];//深度情報を2次元配列に入れ直し
 				//printf("%.0f, ",depth_data[i][j]);
-				
+
 				//深度情報をx,y,zに書き出し．カメラ座標系は前方zなので注意．
 				openni::CoordinateConverter::convertDepthToWorld((openni::VideoStream &)depth1,(int)i,(int)j,(openni::DepthPixel)pDepth[index],
 					(float *)&x,(float *)&y,(float *)&z);
@@ -630,13 +613,13 @@ int measure()
 				xw2=xw2+sensor_position[0];
 				yw2=yw2+sensor_position[1];
 				zw2=zw2+sensor_position[2];
-				
+
 				point[i][j].p[0]=xw2;
 				point[i][j].p[1]=yw2;
 				point[i][j].p[2]=zw2;
 				//printf("[%.0f, %.0f, %.0f]\n",x,y,z);
-				
-				
+
+
 				//map構造体へ書き込み
 				i2=map1.xtoi(xw2);
 				j2=map1.ytoj(yw2);
@@ -647,7 +630,7 @@ int measure()
 
 				//Voxelに書き込み
 				voxel1.input(xw2,yw2,zw2);
-				
+
 			}
 			//printf("\n");
 
